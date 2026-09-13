@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'teknologi':
         return 'assets/images/TEK.jpg';
       case 'kuliner':
-        return 'assets/images/KLJ.jpg';
+        return 'assets/images/KUL.jpg';
       case 'gaya hidup':
         return 'assets/images/GAHID.jpg';
       case 'pendidikan':
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'olahraga':
         return 'assets/images/OLAHRAG.jpg';
       case 'kesehatan':
-        return 'assets/images/KESD.jpg';
+        return 'assets/images/KESEH.jpg';
       case 'keuangan':
         return 'assets/images/MONEY.jpg';
       case 'wisata':
@@ -190,49 +190,54 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
-            final categoryAsset = _getCategoryAsset(post.category ?? '');
+            final categoryAsset = _getCategoryAsset(post.categoryTitle ?? '');
+
+            // widget gambar/icon kategori - sekarang dipakai di TRAILING (kanan), bukan leading (kiri)
+            final imageBox = ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 50,
+                height: 50,
+                color: Colors.grey.shade100,
+                child: post.image != null && post.image!.isNotEmpty
+                    ? Image.network(
+                        post.image!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return categoryAsset != null
+                              ? Image.asset(categoryAsset, fit: BoxFit.cover)
+                              : const Icon(Icons.article, color: Colors.black54);
+                        },
+                      )
+                    : (categoryAsset != null
+                        ? Image.asset(categoryAsset, fit: BoxFit.cover)
+                        : const Icon(Icons.article, color: Colors.black54)),
+              ),
+            );
 
             return Card(
               margin: const EdgeInsets.only(bottom: 12),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      color: Colors.grey.shade100,
-                      child: post.image != null && post.image!.isNotEmpty
-                          ? Image.network(
-                              post.image!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return categoryAsset != null
-                                    ? Image.asset(categoryAsset, fit: BoxFit.cover)
-                                    : const Icon(Icons.article, color: Colors.black54);
-                              },
-                            )
-                          : (categoryAsset != null
-                              ? Image.asset(categoryAsset, fit: BoxFit.cover)
-                              : const Icon(Icons.article, color: Colors.black54)),
-                    ),
-                  ),
                   title: Text(
                     post.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   subtitle: Text(
-                    '${post.descriptions}\nKategori: ${post.category ?? "-"}',
+                    '${post.descriptions}\nKategori: ${post.categoryTitle ?? "-"}',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white70),
                   ),
                   isThreeLine: true,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      imageBox,
+                      const SizedBox(width: 4),
                       IconButton(
-                        icon: const Icon(Icons.edit_outlined, color: Colors.black87),
+                        icon: const Icon(Icons.edit_outlined, color: Colors.white),
                         onPressed: () async {
                           final result = await Navigator.push(
                             context,

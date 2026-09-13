@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import '../models/post.dart';
 import '../models/category.dart';
 
@@ -54,32 +53,22 @@ class ApiService {
     required String title,
     required String descriptions,
     int? categoryId,
-    XFile? imageFile,
   }) async {
-    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/posts'));
-    
-    request.fields['title'] = title;
-    request.fields['descriptions'] = descriptions;
-    if (categoryId != null) {
-      request.fields['category_id'] = categoryId.toString();
-    }
+    final response = await http.post(
+      Uri.parse('$baseUrl/posts'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'title': title,
+        'descriptions': descriptions,
+        'category_id': categoryId,
+      }),
+    );
 
-    if (imageFile != null) {
-      final bytes = await imageFile.readAsBytes();
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          bytes,
-          filename: imageFile.name,
-        ),
-      );
-    }
+    print('CREATE POST - Status Code: ${response.statusCode}');
+    print('CREATE POST - Response Body: ${response.body}');
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-
-    if (response.statusCode != 201 && response.statusCode != 200) {
-      throw Exception('Gagal menambahkan post');
+    if (response.statusCode != 201) {
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 
@@ -88,32 +77,35 @@ class ApiService {
     required String title,
     required String descriptions,
     int? categoryId,
-    XFile? imageFile,
   }) async {
-    var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/posts/$id'));
+    final response = await http.put(
+      Uri.parse('$baseUrl/posts/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'title': title,
+        'descriptions': descriptions,
+        'category_id': categoryId,
+      }),
+    );
 
-    request.fields['title'] = title;
-    request.fields['descriptions'] = descriptions;
-    if (categoryId != null) {
-      request.fields['category_id'] = categoryId.toString();
-    }
-
-    if (imageFile != null) {
-      final bytes = await imageFile.readAsBytes();
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          bytes,
-          filename: imageFile.name,
-        ),
-      );
-    }
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
+    print('UPDATE POST - Status Code: ${response.statusCode}');
+    print('UPDATE POST - Response Body: ${response.body}');
 
     if (response.statusCode != 200) {
-      throw Exception('Gagal memperbarui post');
+      throw Exception(_extractErrorMessage(response.body));
+    }
+  }
+
+  static String _extractErrorMessage(String responseBody) {
+    try {
+      final decoded = jsonDecode(responseBody);
+      final message = decoded['message'];
+      final error = decoded['error'];
+      if (error != null) return '$message ($error)';
+      if (message != null) return message.toString();
+      return responseBody;
+    } catch (_) {
+      return responseBody;
     }
   }
 

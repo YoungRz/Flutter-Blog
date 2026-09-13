@@ -12,36 +12,33 @@ class MyBlogApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'My Blog',
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
-        scaffoldBackgroundColor: Colors.white,
+        // transparan biar gradient dari builder di bawah kelihatan
+        scaffoldBackgroundColor: Colors.transparent,
         colorScheme: const ColorScheme.light(
-          primary: Colors.black,
-          secondary: Colors.black87,
+          primary: Color(0xFF62C5DC),
+          secondary: Color(0xFF97D9E8),
           surface: Colors.white,
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           elevation: 0,
           scrolledUnderElevation: 0,
-          centerTitle: false,
           titleTextStyle: GoogleFonts.poppins(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),
         cardTheme: CardThemeData(
-          color: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade200, width: 1),
-          ),
+          color: const Color(0xFF006199),
+          elevation: 2,
+          shadowColor: Colors.black26,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light().textTheme).apply(
           bodyColor: Colors.black87,
@@ -49,47 +46,61 @@ class MyBlogApp extends StatelessWidget {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.grey.shade50,
-          labelStyle: TextStyle(color: Colors.grey.shade600),
+          fillColor: Colors.white,
+          labelStyle: const TextStyle(color: Colors.black54),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+            borderSide: BorderSide(color: Colors.grey[300]!),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.black, width: 1.5),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderSide: BorderSide(color: Color(0xFF62C5DC), width: 1.5),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
+            backgroundColor: const Color(0xFF62C5DC),
             foregroundColor: Colors.white,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.black,
-            side: BorderSide(color: Colors.grey.shade300),
+            foregroundColor: Colors.black87,
+            side: const BorderSide(color: Color(0xFF62C5DC)),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         chipTheme: ChipThemeData(
           backgroundColor: Colors.white,
-          selectedColor: Colors.black,
-          side: BorderSide(color: Colors.grey.shade300),
+          selectedColor: const Color(0xFF62C5DC),
+          side: const BorderSide(color: Color(0xFF97D9E8)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           labelStyle: GoogleFonts.poppins(color: Colors.black87, fontWeight: FontWeight.w500),
           secondaryLabelStyle: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.black,
+          backgroundColor: Color(0xFF62C5DC),
           foregroundColor: Colors.white,
-          elevation: 2,
         ),
       ),
+      // builder ini yang naro gradient background di BELAKANG semua halaman
+      builder: (context, child) {
+        return Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF62C5DC),
+                Color(0xFF74CCE0),
+                Color(0xFF97D9E8),
+              ],
+            ),
+          ),
+          child: child,
+        );
+      },
       home: const HomeScreen(),
     );
   }
