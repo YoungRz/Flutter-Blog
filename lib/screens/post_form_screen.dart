@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import '../assets/images';
+import 'package:image_picker/image_picker.dart';
 import '../models/post.dart';
 import '../models/category.dart';
 import '../services/api_services.dart';
@@ -44,7 +44,8 @@ class _PostFormScreenState extends State<PostFormScreen> {
   }
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
     );
@@ -163,7 +164,7 @@ class _PostFormScreenState extends State<PostFormScreen> {
                   }
                   final categories = snapshot.data!;
                   return DropdownButtonFormField<int>(
-                    value: _selectedCategoryId,
+                    initialValue: _selectedCategoryId,
                     decoration: const InputDecoration(labelText: 'Kategori'),
                     items: categories
                         .map((c) => DropdownMenuItem(

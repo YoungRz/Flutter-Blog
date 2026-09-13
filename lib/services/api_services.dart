@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import '../models/post.dart';
 import '../models/category.dart';
 
@@ -53,17 +54,31 @@ class ApiService {
     required String title,
     required String descriptions,
     int? categoryId,
+    XFile? imageFile,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/posts'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'title': title,
-        'descriptions': descriptions,
-        'category_id': categoryId,
-      }),
-    );
-    if (response.statusCode != 201) {
+    var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/posts'));
+    
+    request.fields['title'] = title;
+    request.fields['descriptions'] = descriptions;
+    if (categoryId != null) {
+      request.fields['category_id'] = categoryId.toString();
+    }
+
+    if (imageFile != null) {
+      final bytes = await imageFile.readAsBytes();
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: imageFile.name,
+        ),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 201 && response.statusCode != 200) {
       throw Exception('Gagal menambahkan post');
     }
   }
@@ -73,16 +88,30 @@ class ApiService {
     required String title,
     required String descriptions,
     int? categoryId,
+    XFile? imageFile,
   }) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/posts/$id'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'title': title,
-        'descriptions': descriptions,
-        'category_id': categoryId,
-      }),
-    );
+    var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/posts/$id'));
+
+    request.fields['title'] = title;
+    request.fields['descriptions'] = descriptions;
+    if (categoryId != null) {
+      request.fields['category_id'] = categoryId.toString();
+    }
+
+    if (imageFile != null) {
+      final bytes = await imageFile.readAsBytes();
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: imageFile.name,
+        ),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
     if (response.statusCode != 200) {
       throw Exception('Gagal memperbarui post');
     }

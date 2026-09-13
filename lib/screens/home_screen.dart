@@ -16,25 +16,24 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Category>> _categoriesFuture;
   int? _selectedCategoryId;
 
-  // Function untuk mapping nama kategori ke path asset gambar
   String? _getCategoryAsset(String categoryTitle) {
     switch (categoryTitle.toLowerCase().trim()) {
       case 'teknologi':
-        return 'assets/image/TEK.jpg';
+        return 'assets/images/TEK.jpg';
       case 'kuliner':
-        return 'assets/image/KLJ.jpg';
+        return 'assets/images/KLJ.jpg';
       case 'gaya hidup':
-        return 'assets/image/GAHID.jpg';
+        return 'assets/images/GAHID.jpg';
       case 'pendidikan':
-        return 'assets/image/PEND.jpg';
+        return 'assets/images/PEND.jpg';
       case 'olahraga':
-        return 'assets/image/OLAHRAG.jpg';
+        return 'assets/images/OLAHRAG.jpg';
       case 'kesehatan':
-        return 'assets/image/KESD.jpg';
+        return 'assets/images/KESD.jpg';
       case 'keuangan':
-        return 'assets/image/MONEY.jpg';
+        return 'assets/images/MONEY.jpg';
       case 'wisata':
-        return 'assets/image/WISAT.jpg';
+        return 'assets/images/WISAT.jpg';
       default:
         return null;
     }
@@ -191,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
-            final categoryAsset = _getCategoryAsset(post.categoryTitle ?? '');
+            final categoryAsset = _getCategoryAsset(post.category ?? '');
 
             return Card(
               margin: const EdgeInsets.only(bottom: 12),
@@ -209,7 +208,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               post.image!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                // Fallback jika gambar network gagal di-load
                                 return categoryAsset != null
                                     ? Image.asset(categoryAsset, fit: BoxFit.cover)
                                     : const Icon(Icons.article, color: Colors.black54);
@@ -225,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    '${post.descriptions}\nKategori: ${post.categoryTitle ?? "-"}',
+                    '${post.descriptions}\nKategori: ${post.category ?? "-"}',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

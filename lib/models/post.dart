@@ -3,23 +3,26 @@ class Post {
   final String title;
   final String descriptions;
   final int? categoryId;
-  final String? categoryTitle;
+  final String? category;
+  final String? image;
 
   Post({
     required this.id,
     required this.title,
     required this.descriptions,
     this.categoryId,
-    this.categoryTitle,
+    this.category,
+    this.image,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'],
       title: json['title'],
-      descriptions: json['descriptions'],
+      descriptions: json['descriptions'] ?? json['content'] ?? '',
       categoryId: json['category_id'],
-      categoryTitle: json['category_title'],
+      category: json['category_name'],
+      image: json['image'] ?? json['image_url'],
     );
   }
 }
