@@ -8,12 +8,14 @@ class ApiService {
 
   static Future<List<Category>> getCategories() async {
     final response = await http.get(Uri.parse('$baseUrl/categories'));
+    print('GET CATEGORIES - Status Code: ${response.statusCode}');
+    print('GET CATEGORIES - Response Body: ${response.body}');
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final List data = body['data'];
       return data.map((e) => Category.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal mengambil kategori');
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 
@@ -24,18 +26,20 @@ class ApiService {
       body: jsonEncode({'category_title': categoryTitle}),
     );
     if (response.statusCode != 201) {
-      throw Exception('Gagal menambahkan kategori');
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 
   static Future<List<Post>> getPosts() async {
     final response = await http.get(Uri.parse('$baseUrl/posts'));
+    print('GET POSTS - Status Code: ${response.statusCode}');
+    print('GET POSTS - Response Body: ${response.body}');
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final List data = body['data'];
       return data.map((e) => Post.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal mengambil data post');
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 
@@ -45,7 +49,7 @@ class ApiService {
       final body = jsonDecode(response.body);
       return Post.fromJson(body['data']);
     } else {
-      throw Exception('Gagal mengambil detail post');
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 
@@ -112,7 +116,7 @@ class ApiService {
   static Future<void> deletePost(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/posts/$id'));
     if (response.statusCode != 200) {
-      throw Exception('Gagal menghapus post');
+      throw Exception(_extractErrorMessage(response.body));
     }
   }
 }
