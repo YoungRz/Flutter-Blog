@@ -2,7 +2,7 @@ class Post {
   final int id;
   final String title;
   final String descriptions;
-  final String? image; // ini udah berupa URL lengkap dari backend
+  final String? image; 
   final int? categoryId;
   final String? categoryTitle;
  
